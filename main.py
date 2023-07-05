@@ -1,7 +1,7 @@
 import os
 import sys
 import shutil
-directory = sys.argv[1]
+
 
 def translate(name):
     CYRILLIC_SYMBOLS = "абвгдеёжзийклмнопрстуфхцчшщъыьэюяєіїґ"
@@ -18,7 +18,9 @@ def translate(name):
 #змінює назви з кирилиці на латиницю
 def normalize(path_to_folder) -> None:
     for filename in os.listdir(path_to_folder):
-        os.rename(path_to_folder + f'\\{filename}', path_to_folder + f'\\{translate(filename)}')
+        original_name = os.path.join(path_to_folder,filename)
+        new_name = os.path.join(path_to_folder,translate(filename))
+        os.rename(original_name, new_name)
 
 #видалення пустих папок
 def delete_empty_folders(directory):
@@ -42,21 +44,18 @@ def dst_folder(filename):
 #Переміщення файлів
 def move_folders(directory):
     for item in os.listdir(directory):
-        if not os.path.isdir(directory+f'\\{item}'):
-            src = directory+f'\\{item}'
-            #print(src)
+        if not os.path.isdir(os.path.join(directory,item)):
+            src = os.path.join(directory,item)
             if dst_folder(item) is not None:
-                dst = 'D:\lessons\GoIT_Python\Мотлох'+f'\\{dst_folder(item)}'
-                #print(dst)
+                dst = os.path.join(directory,dst_folder(item))
                 #розпакування архівів
                 if item.endswith(('.zip', '.gz', '.tar')):
-                    #print(item)
-                    shutil.unpack_archive(src, f'{directory}\\archives')
+                    shutil.unpack_archive(src, os.path.join(directory,'archives'))
                     os.remove(src)
                 else:
                     shutil.move(src,dst)
-        if os.path.isdir(directory+f'\\{item}') and item!='video':
-            move_folders(directory+f'\\{item}')
+        if os.path.isdir(os.path.join(directory,item)) and item!='video':
+            move_folders(os.path.join(directory,item))
 
 #головна функція для сортування файлів
 def sorting(directory):
@@ -72,4 +71,6 @@ def sorting(directory):
     #видалення усіх пустих папок, що залишились
     delete_empty_folders(directory)
 
-sorting(directory)
+
+if __name__ == '__main__':
+    sorting(sys.argv[1])
