@@ -73,4 +73,7 @@ def sorting(directory):
 
 
 if __name__ == '__main__':
-    sorting(sys.argv[1])
+    if sys.argv[1]:
+        sorting(sys.argv[1])
+    else:
+        print("Directory was not provided")
